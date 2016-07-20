@@ -25,7 +25,6 @@ def get_files_list(path, mask):
 
 
 def show_suspected_code(string, suspected_word):
-
     for rule in suspected_word:
         try:
             pos = string.index(rule)
@@ -108,7 +107,8 @@ def is_bad_filename(file_path):
         'editclass.php',
         'plugin.php',
         'db-update.php',
-        'getFile.php'
+        'getFile.php',
+        'class-wp-text.php'
     ]
 
     fname = os.path.split(file_path)[-1]
@@ -172,18 +172,23 @@ if __name__ == '__main__':
             'base64_decode': 5,
             'assert': 5,
             'chmod': 1,
-            'long_string': 1,
-            'too_many_spaces': 2,
+            'long_string': 2,
+            'too_many_spaces': 5,
             'system': 1,
             'fileperms': 1,
             'wso_shell': 50,
-            'curl_get_from_webpage_one_time': 5,
+            'curl_get_from_webpage_one_time': 50,
             'maybe_session_include': 2,
         }
 
         for line in data['lines'].values():
-            for reason in line['reason']:
-                weight += weights[reason]
+            if len(line['reason']) > 1:
+                line_weight = 0
+                for reason in line['reason']:
+                    line_weight *= weights[reason]
+                weight += line_weight
+            else:
+                weight += weights[line['reason'][0]]
 
         if data.get('bad_filename', False):
             weight += 30
