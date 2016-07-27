@@ -29,7 +29,13 @@ def check_js_file(filename):
             clean_js = evil_js.sub('', content)
 
             # rename infected file
-            os.rename(filename, filename + ".bak")
+            newfilename = filename + ".bak"
+            for i in range(100):
+                if not os.path.isfile(newfilename + str(i)):
+                    newfilename += str(i)
+                    break
+
+            os.rename(filename, newfilename)
             fname = os.path.split(filename)[1]
             logging.warning('infected file "%s" renamed to "%s"' % (fname, fname + ".bak"))
 
